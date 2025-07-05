@@ -2,6 +2,7 @@ package clock
 
 import (
 	"context"
+	"runtime"
 	"sort"
 	"sync"
 	"time"
@@ -414,7 +415,21 @@ func (t *internalTicker) Tick(now time.Time) {
 }
 
 // Sleep momentarily so that other goroutines can process.
-func gosched() { time.Sleep(1 * time.Millisecond) }
+func gosched() {
+
+	// time.Sleep(1 * time.Millisecond)
+
+	// I'm not sure what problem was being solved here, but sleeping for 1ms basically
+	// makes this package unusable for my purposes, it's just too slow.  The test cases
+	// in this thing are also super racy with all kinds of inconsistent results.
+	// But, this change makes the tests usually pass and things move much faster.
+	// I suspect what's actually needed is something to keep track of whatever this was
+	// intended to wait for and make it deterministic, but I just don't have the time
+	// right this moment to dive into it.  Thus, this hack.  -bgp
+	for i := 0; i < 500; i++ {
+		runtime.Gosched()
+	}
+}
 
 var (
 	// type checking

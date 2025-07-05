@@ -426,7 +426,7 @@ func gosched() {
 	// I suspect what's actually needed is something to keep track of whatever this was
 	// intended to wait for and make it deterministic, but I just don't have the time
 	// right this moment to dive into it.  Thus, this hack.  -bgp
-	for i := 0; i < 500; i++ {
+	for i := 0; i < GoschedCount; i++ {
 		runtime.Gosched()
 	}
 }
@@ -435,3 +435,8 @@ var (
 	// type checking
 	_ Clock = &Mock{}
 )
+
+// GoschedCount can be set to 1 to run once or 0 to disable the calls to runtime.Gosched() and make things faster.
+// This might break stuff, I don't know yet...  But I do know if I have to keep slowing down
+// my calling code for no reason I will end up tearing my hair out. -bgp
+var GoschedCount = 500

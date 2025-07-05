@@ -1,3 +1,4 @@
-module github.com/benbjohnson/clock
+module github.com/bradleypeabody/clock
 
-go 1.15
+go 1.24
+
